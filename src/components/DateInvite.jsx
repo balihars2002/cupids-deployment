@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion'
+import ScratchCard from './ScratchCard'
 
 const DateInvite = () => {
-  // Customize these details!
   const dateDetails = {
     title: "Valentine's Getaway",
     time: "Last week of Feb",
@@ -16,32 +16,48 @@ const DateInvite = () => {
       className="bg-white/90 backdrop-blur-sm rounded-3xl shadow-2xl p-8 max-w-lg w-full"
     >
       <div className="text-center mb-6">
-        <h2 className="text-3xl font-script text-rose-red mb-4">
+        <h2 className="text-3xl font-script text-rose-red mb-2">
           Our Date Plans 📅
         </h2>
-        <div className="space-y-3 text-left">
-          <div className="flex items-start gap-3">
-            <span className="text-2xl">🕐</span>
-            <div>
-              <p className="font-semibold text-gray-800">Time</p>
-              <p className="text-gray-600">{dateDetails.time}</p>
+        <p className="text-gray-400 text-sm mb-6">Scratch to reveal the surprise!</p>
+
+        <div className="space-y-5">
+          {/* Time - Scratchable */}
+          <div className="flex items-center gap-4">
+            <span className="text-2xl flex-shrink-0">🕐</span>
+            <div className="flex-1">
+              <p className="font-semibold text-gray-800 text-left mb-2">Time</p>
+              <ScratchCard width={260} height={60}>
+                <p className="text-gray-700 font-semibold text-lg">{dateDetails.time}</p>
+              </ScratchCard>
             </div>
           </div>
-          
-          <div className="flex items-start gap-3">
-            <span className="text-2xl">📍</span>
-            <div>
-              <p className="font-semibold text-gray-800">Location</p>
-              <p className="text-gray-600">{dateDetails.location}</p>
+
+          {/* Location - Scratchable */}
+          <div className="flex items-center gap-4">
+            <span className="text-2xl flex-shrink-0">📍</span>
+            <div className="flex-1">
+              <p className="font-semibold text-gray-800 text-left mb-2">Location</p>
+              <ScratchCard width={260} height={60}>
+                <p className="text-gray-700 font-semibold text-lg">{dateDetails.location}</p>
+              </ScratchCard>
+            </div>
+          </div>
+
+          {/* Description - Scratchable */}
+          <div className="flex items-center gap-4">
+            <span className="text-2xl flex-shrink-0">💌</span>
+            <div className="flex-1">
+              <p className="font-semibold text-gray-800 text-left mb-2">Secret Message</p>
+              <ScratchCard width={260} height={70}>
+                <p className="text-gray-700 font-medium text-base text-center leading-snug">
+                  {dateDetails.description}
+                </p>
+              </ScratchCard>
             </div>
           </div>
         </div>
-        
-        <p className="text-gray-700 mt-6 italic">
-          {dateDetails.description}
-        </p>
       </div>
-
     </motion.div>
   )
 }
