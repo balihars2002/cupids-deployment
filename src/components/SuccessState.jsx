@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react'
 import { motion } from 'framer-motion'
 import confetti from 'canvas-confetti'
 import DateInvite from './DateInvite'
+import LoveLetter from './LoveLetter'
 
 const SuccessState = () => {
   const confettiRef = useRef(null)
@@ -83,28 +84,24 @@ const SuccessState = () => {
         >
           You said yes! 💕
         </motion.p>
+      </motion.div>
 
-        <motion.div
-          className="max-w-2xl mx-auto text-lg md:text-xl text-gray-600 leading-relaxed"
-          initial={{ y: 20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 0.7 }}
-        >
-          <p className="mb-4">
-            I'm so excited to spend this special day with you. You mean the world to me, and I can't wait to create more beautiful memories together.
-          </p>
-          <p className="font-script text-2xl text-rose-red mt-6">
-            You make every day feel like Valentine's Day. 💖
-          </p>
-        </motion.div>
+      {/* Love Letter Envelope */}
+      <motion.div
+        initial={{ y: 20, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ delay: 0.8 }}
+        className="mb-10 w-full flex justify-center"
+      >
+        <LoveLetter />
       </motion.div>
 
       {/* Date Invite */}
       <motion.div
         initial={{ y: 20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        transition={{ delay: 1 }}
-        className="mt-8"
+        transition={{ delay: 1.5 }}
+        className="mt-4"
       >
         <DateInvite />
       </motion.div>

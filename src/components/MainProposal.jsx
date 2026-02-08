@@ -2,12 +2,34 @@ import { useState, useRef, useEffect, useCallback } from 'react'
 import { motion } from 'framer-motion'
 import ReasonsGenerator from './ReasonsGenerator'
 
+const noMessages = [
+  "No 😢",
+  "Are you sure? 🥺",
+  "Really sure? 😭",
+  "Think again! 💔",
+  "Please? 🙏",
+  "Pretty please? 🥹",
+  "I'll buy you pizza 🍕",
+  "I'll do the dishes 🍽️",
+  "Don't do this to me 😩",
+  "I'll cry... 😢",
+  "You're breaking my heart 💔",
+  "NOOOOO 😭😭😭",
+]
+
 const MainProposal = ({ onAccept }) => {
   const [noButtonPos, setNoButtonPos] = useState({ x: 0, y: 0 })
   const [noInitialized, setNoInitialized] = useState(false)
+  const [noCount, setNoCount] = useState(0)
   const [showReasons, setShowReasons] = useState(false)
   const noButtonRef = useRef(null)
   const containerRef = useRef(null)
+
+  // Yes button grows, No button shrinks with each attempt
+  const yesScale = 1 + noCount * 0.15
+  const noScale = Math.max(0.4, 1 - noCount * 0.07)
+  const yesPadding = Math.min(20 + noCount * 4, 48)
+  const yesFont = Math.min(24 + noCount * 3, 48)
 
   // Place the No button next to Yes initially
   useEffect(() => {
@@ -35,22 +57,19 @@ const MainProposal = ({ onAccept }) => {
     const dy = e.clientY - btnCenterY
     const distance = Math.sqrt(dx * dx + dy * dy)
 
-    const fleeRadius = 150 // pixels – start running when cursor is this close
+    const fleeRadius = 150
 
     if (distance < fleeRadius) {
-      // Move away from the cursor
       const angle = Math.atan2(dy, dx)
       const fleeDistance = 200 + Math.random() * 100
 
       let newX = noButtonPos.x - Math.cos(angle) * fleeDistance
       let newY = noButtonPos.y - Math.sin(angle) * fleeDistance
 
-      // Keep within container bounds
       const padding = 10
       const maxX = container.width - btn.width - padding
       const maxY = container.height - btn.height - padding
 
-      // If pushed out of bounds, bounce to the opposite side
       if (newX < padding) newX = maxX - Math.random() * 100
       if (newX > maxX) newX = padding + Math.random() * 100
       if (newY < padding) newY = maxY - Math.random() * 100
@@ -63,13 +82,15 @@ const MainProposal = ({ onAccept }) => {
     }
   }, [noButtonPos])
 
-  // Fallback: also flee on hover / touch
+  // Flee on hover / touch + escalate
   const handleNoHover = () => {
     if (!containerRef.current || !noButtonRef.current) return
     const container = containerRef.current.getBoundingClientRect()
     const btn = noButtonRef.current.getBoundingClientRect()
     const maxX = container.width - btn.width - 20
     const maxY = container.height - btn.height - 20
+
+    setNoCount((prev) => Math.min(prev + 1, noMessages.length - 1))
     setNoButtonPos({
       x: Math.random() * maxX,
       y: Math.random() * maxY,
@@ -83,6 +104,8 @@ const MainProposal = ({ onAccept }) => {
       alert('Error 404: Rejection not found. Please try again. 💕')
     }, 100)
   }
+
+  const currentNoMessage = noMessages[Math.min(noCount, noMessages.length - 1)]
 
   return (
     <div
@@ -113,37 +136,55 @@ const MainProposal = ({ onAccept }) => {
         </motion.div>
       </motion.div>
 
-      {/* Yes Button – stays put */}
+      {/* Yes Button – grows with each No attempt */}
       <motion.button
         onClick={onAccept}
-        whileHover={{ scale: 1.1 }}
-        whileTap={{ scale: 0.95 }}
-        className="bg-green-500 text-white px-12 py-4 rounded-full text-2xl font-bold shadow-2xl hover:bg-green-600 hover:shadow-green-300/50 transition-all z-20"
-        animate={{
-          boxShadow: [
-            '0 0 0 0 rgba(34, 197, 94, 0.7)',
-            '0 0 0 20px rgba(34, 197, 94, 0)',
-            '0 0 0 0 rgba(34, 197, 94, 0)',
-          ],
+        whileHover={{ scale: yesScale + 0.1 }}
+        whileTap={{ scale: yesScale * 0.95 }}
+        animate={{ scale: yesScale }}
+        transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+        style={{
+          fontSize: `${yesFont}px`,
+          padding: `16px ${yesPadding}px`,
         }}
-        transition={{ duration: 2, repeat: Infinity }}
+        className="bg-green-500 text-white rounded-full font-bold shadow-2xl hover:bg-green-600 hover:shadow-green-300/50 transition-colors z-20"
       >
-        Yes! 💖
+        {noCount >= 3 ? "YES! Please! 💖💖💖" : noCount >= 1 ? "Yes! 💖💖" : "Yes! 💖"}
       </motion.button>
 
-      {/* No Button – runs away from cursor */}
+      {/* No Button – shrinks and runs away */}
       {noInitialized && (
         <motion.button
           ref={noButtonRef}
           onMouseEnter={handleNoHover}
           onTouchStart={handleNoHover}
           onClick={handleNoClick}
-          animate={{ left: noButtonPos.x, top: noButtonPos.y }}
+          animate={{
+            left: noButtonPos.x,
+            top: noButtonPos.y,
+            scale: noScale,
+            opacity: Math.max(0.5, 1 - noCount * 0.05),
+          }}
           transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-          className="absolute bg-red-500 text-white px-8 py-3 rounded-full text-xl font-semibold shadow-lg hover:bg-red-600 z-10 select-none"
+          className="absolute bg-red-500 text-white px-8 py-3 rounded-full text-xl font-semibold shadow-lg hover:bg-red-600 z-10 select-none whitespace-nowrap"
         >
-          No 😢
+          {currentNoMessage}
         </motion.button>
+      )}
+
+      {/* Desperate message after multiple attempts */}
+      {noCount >= 3 && (
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="mt-6 text-rose-red font-script text-xl md:text-2xl z-10 text-center"
+        >
+          {noCount >= 8
+            ? "At this point, just say yes... 😭💕"
+            : noCount >= 5
+            ? "The Yes button is getting bigger for a reason... 🥺"
+            : "Come on, you know you want to say yes! 💕"}
+        </motion.p>
       )}
 
       {/* Reasons Why Button */}
