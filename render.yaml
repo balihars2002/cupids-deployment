@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: cupids-deployment
+    runtime: static
+    buildCommand: npm install && npm run build
+    staticPublishPath: ./dist
+    envVars:
+      - key: NODE_VERSION
+        value: 18.19.1
