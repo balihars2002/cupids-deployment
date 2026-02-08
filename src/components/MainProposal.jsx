@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect, useCallback } from 'react'
 import { motion } from 'framer-motion'
 import ReasonsGenerator from './ReasonsGenerator'
+import Magic8Ball from './Magic8Ball'
 
 const noMessages = [
   "No 😢",
@@ -22,6 +23,7 @@ const MainProposal = ({ onAccept }) => {
   const [noInitialized, setNoInitialized] = useState(false)
   const [noCount, setNoCount] = useState(0)
   const [showReasons, setShowReasons] = useState(false)
+  const [show8Ball, setShow8Ball] = useState(false)
   const noButtonRef = useRef(null)
   const containerRef = useRef(null)
 
@@ -187,8 +189,8 @@ const MainProposal = ({ onAccept }) => {
         </motion.p>
       )}
 
-      {/* Reasons Why Button */}
-      <div className="mt-10 z-10">
+      {/* Feature Buttons */}
+      <div className="mt-10 z-10 flex flex-col md:flex-row gap-3">
         <motion.button
           onClick={() => setShowReasons(!showReasons)}
           whileHover={{ scale: 1.05 }}
@@ -196,6 +198,15 @@ const MainProposal = ({ onAccept }) => {
           className="bg-white/80 backdrop-blur-sm text-rose-red px-6 py-3 rounded-full font-semibold shadow-lg hover:shadow-xl transition-all"
         >
           {showReasons ? 'Hide' : 'Show'} Reasons Why 💭
+        </motion.button>
+
+        <motion.button
+          onClick={() => setShow8Ball(!show8Ball)}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          className="bg-white/80 backdrop-blur-sm text-rose-red px-6 py-3 rounded-full font-semibold shadow-lg hover:shadow-xl transition-all"
+        >
+          {show8Ball ? 'Hide' : '🎱'} Magic 8-Ball
         </motion.button>
       </div>
 
@@ -208,6 +219,18 @@ const MainProposal = ({ onAccept }) => {
           className="mt-8 z-10"
         >
           <ReasonsGenerator />
+        </motion.div>
+      )}
+
+      {/* Magic 8-Ball */}
+      {show8Ball && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -20 }}
+          className="mt-8 z-10"
+        >
+          <Magic8Ball />
         </motion.div>
       )}
     </div>
